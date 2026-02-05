@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estoque
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: estoque
+  template:
+    metadata:
+      labels:
+        app: estoque
+    spec:
+      containers:
+        - name: estoque
+          image: estoque:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: app-config

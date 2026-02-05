@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pagamentos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pagamentos
+  template:
+    metadata:
+      labels:
+        app: pagamentos
+    spec:
+      containers:
+        - name: pagamentos
+          image: pagamentos:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: app-config

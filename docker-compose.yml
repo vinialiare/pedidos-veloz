@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16.2
+    container_name: db
+    environment:
+      POSTGRES_USER: veloz
+      POSTGRES_PASSWORD: veloz
+      POSTGRES_DB: pedidos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - veloz-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U veloz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pedidos:
+    image: lojaveloz/pedidos:1.0.0
+    build:
+      context: ./pedidos
+    container_name: pedidos
+    environment:
+      SERVICE_NAME: pedidos
+      SERVICE_PORT: 5000
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - veloz-net
+
+  pagamentos:
+    image: lojaveloz/pagamentos:1.0.0
+    build:
+      context: ./pagamentos
+    container_name: pagamentos
+    environment:
+      SERVICE_NAME: pagamentos
+      SERVICE_PORT: 5000
+    networks:
+      - veloz-net
+
+  estoque:
+    image: lojaveloz/estoque:1.0.0
+    build:
+      context: ./estoque
+    container_name: estoque
+    environment:
+      SERVICE_NAME: estoque
+      SERVICE_PORT: 5000
+    networks:
+      - veloz-net
+
+  gateway:
+    image: lojaveloz/gateway:1.0.0
+    build:
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:5000"
+    environment:
+      SERVICE_NAME: gateway
+      SERVICE_PORT: 5000
+      PEDIDOS_URL: http://pedidos:5000
+      PAGAMENTOS_URL: http://pagamentos:5000
+      ESTOQUE_URL: http://estoque:5000
+    depends_on:
+      - pedidos
+      - pagamentos
+      - estoque
+    networks:
+      - veloz-net
+
+volumes:
+  postgres_data:
+
+networks:
+  veloz-net:
+    driver: bridge
