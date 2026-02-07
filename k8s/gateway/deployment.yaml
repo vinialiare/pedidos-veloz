@@ -21,12 +21,14 @@ spec:
           envFrom:
             - configMapRef:
                 name: app-config
+
           livenessProbe:
             httpGet:
               path: /health
               port: 5000
             initialDelaySeconds: 10
             periodSeconds: 10
+
           readinessProbe:
             httpGet:
               path: /health
