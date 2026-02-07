@@ -14,21 +14,19 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: gateway:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vinialiare/gateway:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           envFrom:
             - configMapRef:
                 name: app-config
-
           livenessProbe:
             httpGet:
               path: /health
               port: 5000
             initialDelaySeconds: 10
             periodSeconds: 10
-
           readinessProbe:
             httpGet:
               path: /health

@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: pedidos
-          image: pedidos:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: vinialiare/pedidos:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           resources:
