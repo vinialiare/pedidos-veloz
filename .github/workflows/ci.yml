@@ -26,6 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r gateway/requirements.txt
 
-      - name: Lint básico (verificar sintaxe)
+      - name: Verificar sintaxe do código (lint básico)
         run: |
           python -m py_compile gateway/app.py
+
+      - name: Build da imagem Docker do gateway
+        run: |
+          docker build -t gateway:ci ./gateway
