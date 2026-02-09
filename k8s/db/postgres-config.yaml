@@ -1,7 +1,11 @@
 apiVersion: v1
-kind: ConfigMap
+kind: Service
 metadata:
-  name: postgres-config
-  namespace: default
-data:
-  POSTGRES_DB: pedidos
+  name: postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
